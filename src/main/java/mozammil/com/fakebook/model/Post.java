@@ -1,12 +1,16 @@
 package mozammil.com.fakebook.model;
 
+import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+@Data
 @ToString
 @Entity
 @Table(name = "post")
@@ -20,6 +24,14 @@ public class Post{
     @Column(nullable = false)
     private String content;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
     @OneToMany(
             targetEntity = Comment.class,
             cascade = CascadeType.ALL,
@@ -28,40 +40,16 @@ public class Post{
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     private List<Comment> comments = new ArrayList<>();
 
-    public Post() {
+    @PrePersist
+    protected void onCreation(){
+        if(createdAt == null){
+            createdAt = new Date();
+            updatedAt = createdAt;
+        }
     }
 
-    public Post(String title, String content) {
-        this.title = title;
-        this.content = content;
+    @PreUpdate
+    protected void onUpdation(){
+        updatedAt = new Date();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
 }

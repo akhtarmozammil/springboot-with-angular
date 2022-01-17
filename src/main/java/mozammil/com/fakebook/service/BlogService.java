@@ -1,6 +1,7 @@
 package mozammil.com.fakebook.service;
 
 
+import mozammil.com.fakebook.dto.PostContentDto;
 import mozammil.com.fakebook.exception.CommentNotFoundException;
 import mozammil.com.fakebook.exception.PostNotFoundException;
 import mozammil.com.fakebook.model.Comment;
@@ -10,6 +11,7 @@ import mozammil.com.fakebook.repository.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -42,16 +44,20 @@ public class BlogService {
                 orElseThrow(() -> new PostNotFoundException("Post id: " + id + " is not found."));
     }
 
+    public List<PostContentDto> findPostWithTitleAndContent(){
+        return postRepo.allPostWithTitleAndContent();
+    }
+
     // need verification
-    public List<Comment> addComment(Long id, Comment comment){
-        Post post = findPostById(id);
-        post.getComments().add(comment);
-        return postRepo.save(post).getComments();
+    public Comment addComment(Long id, Comment comment){
+
+        comment.setPost_id(id);
+        return commentRepo.save(comment);
     }
 
     public List<Comment> findAllCommentByPostId(Long id){
-        Post post = findPostById(id);
-        return post.getComments();
+        List<Comment> commentsToAPost = commentRepo.findAllCommentByPostId(id);
+        return commentsToAPost;
     }
 
     public Comment findCommentById(Long id){
@@ -70,3 +76,4 @@ public class BlogService {
         return commentRepo.save(comment);
     }
 }
+

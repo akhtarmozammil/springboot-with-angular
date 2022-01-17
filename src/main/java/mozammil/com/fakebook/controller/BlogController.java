@@ -1,5 +1,6 @@
 package mozammil.com.fakebook.controller;
 
+import mozammil.com.fakebook.dto.PostContentDto;
 import mozammil.com.fakebook.model.Comment;
 import mozammil.com.fakebook.model.Post;
 import mozammil.com.fakebook.service.BlogService;
@@ -22,7 +23,13 @@ public class BlogController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<List<Post>> getAllPost (){
+    public ResponseEntity<List<PostContentDto>> getAllPost (){
+        List<PostContentDto> posts = blogService.findPostWithTitleAndContent();
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @GetMapping("/all/posts/with/comments")
+    public ResponseEntity<List<Post>> getAllPostWithComments (){
         List<Post> posts = blogService.findAllPost();
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
@@ -59,23 +66,34 @@ public class BlogController {
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
+    @GetMapping("post/{id}/allComments")
+    public ResponseEntity<List<Comment>> getAllCommentByPostId (@PathVariable("id") Long id){
+        List<Comment> comments = blogService.findAllCommentByPostId(id);
+        return new ResponseEntity<List<Comment>>(comments, HttpStatus.OK);
+    }
+
     @GetMapping("/comment/{id}")
     public ResponseEntity<Comment> getCommentById (@PathVariable("id") Long id){
         Comment comment = blogService.findCommentById(id);
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+        return new ResponseEntity<Comment>(comment, HttpStatus.OK);
     }
 
     @PostMapping("/post/{postId}/addComment")
-    public ResponseEntity<List<Comment>> addCommentToPostId(@PathVariable Long postId, @RequestBody Comment comment){
-        List<Comment> commentList = blogService.addComment(postId,comment);
-        return new ResponseEntity<>(commentList, HttpStatus.CREATED);
+    public ResponseEntity<Comment> addCommentToPostId(@PathVariable Long postId, @RequestBody Comment comment){
+        Comment newComment = blogService.addComment(postId,comment);
+        return new ResponseEntity<Comment>(newComment, HttpStatus.CREATED);
     }
 
     @PutMapping("/post/updateComment")
     public ResponseEntity<Comment> updateComment(@RequestBody Comment comment){
-        blogService.findCommentById(comment.getId());
-        Comment updateComment = blogService.updateComment(comment);
-        return new ResponseEntity<>(updateComment, HttpStatus.OK);
+        try{
+            blogService.findCommentById(comment.getId());
+            Comment updateComment = blogService.updateComment(comment);
+            return new ResponseEntity<>(updateComment, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/deleteComment/{id}")
