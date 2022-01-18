@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,7 +49,6 @@ public class BlogService {
         return postRepo.allPostWithTitleAndContent();
     }
 
-    // need verification
     public Comment addComment(Long id, Comment comment){
 
         comment.setPost_id(id);
@@ -74,6 +74,11 @@ public class BlogService {
 
     public Comment updateComment(Comment comment) {
         return commentRepo.save(comment);
+    }
+
+    public void updatePost(PostContentDto post) {
+        post.setUpdatedAt(new Date());
+        postRepo.updatePost(post.getId(), post.getTitle(), post.getContent(), post.getUpdatedAt());
     }
 }
 

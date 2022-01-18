@@ -47,9 +47,10 @@ public class BlogController {
     }
 
     @PutMapping("/updatePost")
-    public ResponseEntity<Post> updatePost(@RequestBody Post post){
-        Post updatePost = blogService.addPost(post);
-        return new ResponseEntity<>(updatePost, HttpStatus.OK);
+    public ResponseEntity<String> updatePost(@RequestBody PostContentDto post){
+        blogService.updatePost(post);
+        String response = "Updated";
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/deletePost/{id}")
