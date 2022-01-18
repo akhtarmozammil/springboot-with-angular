@@ -22,6 +22,9 @@ public class Comment {
     @Column(nullable = false, updatable = false)
     private Long post_id;
 
+    @Column(nullable = false, updatable = false)
+    private Long user_id;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;

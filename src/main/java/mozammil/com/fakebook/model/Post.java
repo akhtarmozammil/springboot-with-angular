@@ -32,6 +32,9 @@ public class Post{
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
+
     @OneToMany(
             targetEntity = Comment.class,
             cascade = CascadeType.ALL,
