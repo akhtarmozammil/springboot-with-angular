@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface PostRepo extends JpaRepository<Post,Long> {
-
+    // name of the table is the model name you have defined with case sensitive. Don't write the SQL table name here.
     @Query("SELECT new mozammil.com.fakebook.dto.PostContentDto(p.id, p.title, p.content, p.createdAt, p.updatedAt) FROM Post p")
     public List<PostContentDto> allPostWithTitleAndContent();
 
